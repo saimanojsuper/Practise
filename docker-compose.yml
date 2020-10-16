@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.3"
 services:
   els-service:
     image: employee-eureka-service:1.0
