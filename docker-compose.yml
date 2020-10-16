@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   els-service:
-    image: employee-eureka-service:1.0
+    image: saimanojsuper/employee-eureka-service:1.0
     container_name: employee-eureka-service 
     ports:
       - 8761:8761
@@ -9,7 +9,7 @@ services:
       - consumer-producer
   
   producer:
-    image: employee-producer-service:1.0
+    image: saimanojsuper/employee-producer-service:1.0
     container_name: employee-producer-service
     ports:
       - 8810:8810
@@ -21,7 +21,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://els-service:8761/eureka
     
   consumer:
-    image: employee-consumer-service:1.0
+    image: saimanojsuper/employee-consumer-service:1.0
     container_name: employee-consumer-service
     ports:
       - 8820:8820
