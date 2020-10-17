@@ -7,6 +7,8 @@ services:
       - 8761:8761
     networks:
       - consumer-producer
+    environment:
+      DOCKER_HOST : tcp://$HOST:2376
   
   producer:
     image: saimanojsuper/employee-producer-service:1.0
@@ -19,6 +21,7 @@ services:
       - els-service
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://els-service:8761/eureka
+      DOCKER_HOST : tcp://$HOST:2376
     
   consumer:
     image: saimanojsuper/employee-consumer-service:1.0
@@ -31,7 +34,8 @@ services:
       - els-service
       - producer
     environment:
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://els-service:8761/eureka          
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://els-service:8761/eureka
+      DOCKER_HOST : tcp://$HOST:2376
 
 networks:
   consumer-producer:
