@@ -1,0 +1,14 @@
+version: "3.3"
+services:
+  postgresqldb:
+    image: postgres:12.4  
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: user
+      POSTGRES_DB: dealerinfo
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
