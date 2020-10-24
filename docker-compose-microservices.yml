@@ -1,0 +1,85 @@
+version: "3.8"
+services:
+  els-service:
+    image: saimanojsuper/eureka-video:1.0
+    container_name: employee-eureka-service 
+    volumes:
+      - ./configuration/log/eureka-service.log:/tmp/eureka-service.log
+    ports:
+      - 8761:8761
+    networks:
+      - dealer-interface
+
+  zuul-service:
+    image: saimanojsuper/zuul-service:1.0
+    container_name: zuul-service
+    volumes:
+      - ./configuration/log/zuul-service.log:/tmp/zuul-service.log
+    ports:
+      - 8900:8900
+    networks:
+      - dealer-interface
+    depends_on:
+      - els-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://els-service:8761/eureka
+  
+  oauth-server:
+    image: saimanojsuper/oauth-service:1.0
+    container_name: oauth-service
+    volumes:
+      - ./configuration/log/oauth-service.log:/tmp/oauth-service.log
+    ports:
+      - 8086:8086
+    networks:
+      - dealer-interface 
+    depends_on:
+      - els-service
+      - zuul-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://els-service:8761/eureka
+    
+  dealer-dashboard:
+    image: saimanojsuper/dealer-dashboard:1.0
+    container_name: dealer-dashboard-service
+    volumes:
+      - ./configuration/log/dealer-dashboard.log:/tmp/dealer-dashboard.log
+    ports:
+      - 8082:8082
+    networks:
+      - dealer-interface
+    depends_on:
+      - els-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://els-service:8761/eureka 
+
+  dealer-backend:
+    image: saimanojsuper/dealer-backend:1.0
+    container_name: dealer-backend-service
+    volumes:
+      - ./configuration/log/dealer-backend.log:/tmp/dealer-backend.log
+    ports:
+      - 8083:8083
+    networks:
+      - dealer-interface
+    depends_on:
+      - els-service
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://els-service:8761/eureka
+
+  logstash:
+     image: docker.elastic.co/logstash/logstash:7.9.2
+     container_name: logstash 
+     volumes:
+       - ./configuration/pipeline/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+       - ./configuration/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+       - ./configuration/log/:/tmp/
+     ports:
+       - 9600:9600
+       - 5000:5000 
+     networks:
+      - dealer-interface
+   
+
+networks:
+  dealer-interface:
